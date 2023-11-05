@@ -27,8 +27,8 @@ img {
 }
 
 /*
-   * Стили компонента App
-   */
+ * Стили компонента App
+ */
 .App {
   display: grid;
   grid-template-columns: 1fr;
@@ -37,8 +37,8 @@ img {
 }
 
 /*
-   * Стили компонента Searchbar
-   */
+ * Стили компонента Searchbar
+ */
 .Searchbar {
   top: 0;
   left: 0;
@@ -59,17 +59,17 @@ img {
 }
 
 /*
-   * Стили компонента SearchForm
-   */
+ * Стили компонента SearchForm
+ */
 
 /*
-   * Стили компонента ImageGallery
-   */
+ * Стили компонента ImageGallery
+ */
 
 /*
-   * Стили компонента ImageGalleryItem
-   */
+ * Стили компонента ImageGalleryItem
+ */
 
 /*
-   * Стили компонента Modal
-   */
+ * Стили компонента Modal
+ */
