@@ -1,4 +1,4 @@
-import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
+import { ImageGalleryItem } from '../ImageGalleryItem';
 
 export const ImageGallery = ({ images }) => {
   return (
@@ -8,6 +8,7 @@ export const ImageGallery = ({ images }) => {
         return (
           <ImageGalleryItem
             key={id}
+            id={id}
             webformatURL={webformatURL}
             largeImageURL={largeImageURL}
             alt={tags}
