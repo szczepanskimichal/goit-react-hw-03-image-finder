@@ -1,16 +1,7 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import './App.css';
+import { SearchBar } from './SearchBar';
+import { Button } from './Button';
+import { ImageGallery } from './ImageGallery';
+import { Loader } from './Loader';
+import { fetchPhotos, LIMIT } from '../utils/pixabayAPI';
+import { Component } from 'react';
