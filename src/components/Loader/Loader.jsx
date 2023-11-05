@@ -1,17 +1,17 @@
-import { Grid } from 'react-loader-spinner';
+import { ColorRing } from 'react-loader-spinner';
 
 export const Loader = () => {
   return (
-    <div className="Loader">
-      <Grid
+    <div>
+      <ColorRing
+        className="loader"
+        visible={true}
         height="80"
         width="80"
-        color="#4fa94d"
-        ariaLabel="grid-loading"
-        radius="12.5"
+        ariaLabel="blocks-loading"
         wrapperStyle={{}}
-        wrapperClass=""
-        visible={true}
+        wrapperClass="blocks-wrapper"
+        colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
       />
     </div>
   );

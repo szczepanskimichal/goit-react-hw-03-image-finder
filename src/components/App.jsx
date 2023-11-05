@@ -1,27 +1,49 @@
+import React, { Component } from 'react';
+
 import './App.css';
+import { fetchFotos } from './services/fetchFotoApi';
 import { SearchBar } from './SearchBar';
+import { ImageGallery } from './ImageGallery/';
+import { ImageGalleryItem } from './ImageGalleryItem';
 import { Button } from './Button';
-import { ImageGallery } from './ImageGallery';
-import { Loader } from './Loader/Loader';
-import { fetchPhotos, LIMIT } from '../utlils/pixabayAPI/pixabayApi';
-import { Component } from 'react';
+import { Loader } from './Loader';
+import { Modal } from './Modal';
 
 export class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      images: [],
-      searchQuery: '',
-      currentPage: 0,
-      isLoading: false,
-      error: null,
-      totalPages: 0,
-    };
-  }
+  state = {
+    searchQuery: '',
+    currentPage: 1,
+    images: [],
+    isLoading: false,
+    error: null,
+    totalPages: 0,
+    isModalOpen: false,
+    imageURL: '',
+    imageAlt: '',
+  };
+
+  getURL = (imageURL, alt) => {
+    this.setState(
+      { imageURL: imageURL, imageAlt: alt, isModalOpen: true },
+      () =>
+        console.log(
+          'URL',
+          imageURL,
+          'Alt',
+          alt,
+          'isModalOpen',
+          this.state.isModalOpen
+        )
+    );
+  };
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+  };
 
   getQuery = event => {
     event.preventDefault();
-    const searchKeyWord = event.target.elements.search.value;
+    const searchKeyWord = event.target.elements.searchQuery.value;
     if (searchKeyWord !== this.state.searchQuery) {
       this.setState({
         searchQuery: searchKeyWord,
@@ -31,59 +53,87 @@ export class App extends Component {
     }
   };
 
-  incrementPage = () => {
-    this.setState(prevState => ({
-      currentPage: prevState.currentPage + 1,
-    }));
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    const { searchQuery, currentPage } = this.state;
-
+  async componentDidUpdate(prevProps, prevState) {
     if (
-      searchQuery !== prevState.searchQuery ||
-      currentPage !== prevState.currentPage
+      prevState.searchQuery !== this.state.searchQuery ||
+      prevState.currentPage !== this.state.currentPage
     ) {
-      this.fetchData();
+      console.log('STATE', this.state);
+      this.showImages();
     }
   }
 
-  fetchData = async () => {
-    const { searchQuery, currentPage, totalPages } = this.state;
+  showImages = async () => {
+    this.setState({ isLoading: true });
 
     try {
-      this.setState({ isLoading: true });
-      const response = await fetchPhotos(searchQuery, currentPage);
-      const newImages = response.hits;
-      const totalPagesOfImages = Math.ceil(response.totalHits / LIMIT);
+      const { searchQuery, currentPage, totalPages } = this.state;
 
-      this.setState(prevState => ({
-        images: [...prevState.images, ...newImages],
-        isLoading: false,
-        totalPages: totalPagesOfImages,
-      }));
+      const data = await fetchFotos(searchQuery, currentPage);
+      const images = data.hits;
+      this.setState({ totalPages: Math.ceil(data.total / 40) });
+      console.log('IMAGES:', images);
+
+      if (this.state.currentPage === 1) {
+        this.setState({ images: images });
+      } else {
+        this.setState(
+          prevState => ({
+            images: [...prevState.images, ...images],
+            totalPages: totalPages,
+          }),
+          () => console.log('STATE', this.state)
+        );
+      }
     } catch (error) {
-      this.setState({
-        error,
-        isLoading: false,
-      });
+      this.setState({ error });
+    } finally {
+      this.setState({ isLoading: false });
     }
   };
 
+  loadMore = event => {
+    event.preventDefault();
+    return this.setState(
+      prevState => ({
+        currentPage: prevState.currentPage + 1,
+      }),
+      console.log('PAGE', this.state.currentPage)
+    );
+  };
+
   render() {
-    const { isLoading, images, currentPage, totalPages } = this.state;
+    console.log('RENDER');
+
+    const {
+      error,
+      isLoading,
+      images,
+      totalPages,
+      currentPage,
+      imageURL,
+      imageAlt,
+      isModalOpen,
+    } = this.state;
+
     return (
       <div className="App">
-        <SearchBar getQuery={this.getQuery} />
-        {images.length !== 0 && <ImageGallery images={images} />}
-        {isLoading && <Loader />}
+        {isModalOpen && (
+          <Modal modalURL={imageURL} alt={imageAlt} onClose={this.closeModal} />
+        )}
 
+        <SearchBar getQuery={this.getQuery} />
+        {error && <h1>Oops, something went wrong</h1>}
+        {isLoading && <Loader />}
+        {images.length !== 0 && (
+          <ImageGallery>
+            <ImageGalleryItem data={this.state.images} saveURL={this.getURL} />
+          </ImageGallery>
+        )}
         {images.length !== 0 && currentPage !== totalPages && (
-          <Button incrementPage={this.incrementPage} />
+          <Button onClick={this.loadMore} />
         )}
       </div>
     );
   }
 }
-
-export default App;

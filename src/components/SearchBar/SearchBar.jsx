@@ -1,16 +1,21 @@
+import React from 'react';
+import css from './SearchBar.module.css';
+
 export const SearchBar = ({ getQuery }) => {
   return (
-    <header className="Searchbar">
-      <form onSubmit={getQuery} className="SearchForm">
-        <button type="submit" className="SearchForm-button"></button>
+    <header className={css.Searchbar}>
+      <form className={css.SearchForm} onSubmit={getQuery}>
+        <button type="submit" className={css['SearchForm-button']}>
+          <span className={css['SearchForm-button-label']}>Search</span>
+        </button>
 
         <input
-          className="SearchForm-input"
+          className={css['SearchForm-input']}
           type="text"
           autoComplete="off"
-          name="search"
           autoFocus
           placeholder="Search images and photos"
+          name="searchQuery"
         />
       </form>
     </header>
